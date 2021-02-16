@@ -5,8 +5,9 @@ import me.minho.reservation.domain.Shop;
 import me.minho.reservation.repository.MemberRepository;
 import me.minho.reservation.repository.ShopRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
+import javax.servlet.http.HttpSession;
 
 @Service
 @Transactional
@@ -33,5 +34,11 @@ public class MemberService {
         memberRepository.save(member);
         shopRepository.save(shop);
         return member;
+    }
+
+    @Transactional(readOnly = true)
+    public boolean login(String email, String password, HttpSession httpSession) {
+        Member member = memberRepository.findByEmail(email).orElseThrow(IllegalStateException::new);
+        return member.login(password, httpSession);
     }
 }

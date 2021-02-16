@@ -1,14 +1,18 @@
 package me.minho.reservation.domain;
 
 import org.hibernate.validator.constraints.Length;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
+import javax.servlet.http.HttpSession;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "MEMBER")
 public class Member {
+
+    public static final String LOGIN_ATTRIBUTE_NAME = "MEMBER_ID";
 
     @Id @GeneratedValue
     @Column(name = "MEMBER_ID")
@@ -45,6 +49,21 @@ public class Member {
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    private boolean matchPassword(String password) {
+        if (!StringUtils.hasText(password)) {
+            return false;
+        }
+        return this.password.equals(password);
+    }
+
+    public boolean login(String password, HttpSession httpSession) {
+        if (!matchPassword(password)) {
+            return false;
+        }
+        httpSession.setAttribute(LOGIN_ATTRIBUTE_NAME, this.id);
+        return true;
     }
 
     public static class Builder {
