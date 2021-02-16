@@ -30,6 +30,10 @@ public class Member {
     @Column(name = "MEMBER_TYPE", nullable = false)
     private MemberType memberType;
 
+    public boolean isAdmin() {
+        return memberType.isAdminType();
+    }
+
     protected Member() { }
 
     private Member(Builder memberBuilder) {

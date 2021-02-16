@@ -1,13 +1,13 @@
 package me.minho.reservation.service;
 
 import me.minho.reservation.domain.Member;
+import me.minho.reservation.domain.Shop;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.validation.ConstraintDeclarationException;
-
+import static me.minho.reservation.domain.MemberType.ADMIN;
 import static me.minho.reservation.domain.MemberType.NORMAL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -69,5 +69,21 @@ class MemberServiceTest {
                 .build();
 
         assertThatThrownBy(() -> memberService.save(testMember), "이름은 최소한 하나 이상의 문자가 들어가 있어야 한다");
+    }
+
+    @Test
+    @DisplayName("어드민 회원가입은 샵 정보도 같이 받아야 한다.")
+    public void adminJoinTest() {
+        Member testAdminMember = Member.builder()
+                .name("어드민테스트")
+                .email("admin@admin.com")
+                .password("test1234")
+                .memberType(ADMIN)
+                .build();
+
+        Shop testShop = new Shop("testshop", "010-1234-1234",  "서울시", "XX 미용실", "09:00", "18:00", 30, testAdminMember);
+        Member member = memberService.saveAdminMember(testAdminMember, testShop);
+
+        assertThat(testAdminMember).isEqualTo(member);
     }
 }
