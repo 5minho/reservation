@@ -6,9 +6,14 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static java.util.concurrent.TimeUnit.MINUTES;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
 
@@ -78,5 +83,25 @@ public class Shop {
         this.closeTime = closeTime;
         this.timeInterval = timeInterval;
         this.owner = owner;
+    }
+
+    public List<LocalDateTime> getReservationTimeList(LocalDate reservationDate) {
+        final LocalDateTime openTime = atTime(reservationDate, this.openTime);
+        final LocalDateTime closeTime = atTime(reservationDate, this.closeTime);
+
+        List<LocalDateTime> reservationTimeList = new ArrayList<>();
+
+        for (LocalDateTime time = openTime ; time.isBefore(closeTime) ; time = time.plusMinutes(timeInterval)) {
+            reservationTimeList.add(time);
+        }
+
+        return reservationTimeList;
+    }
+
+    private LocalDateTime atTime(LocalDate localDate, String time) {
+        String[] hourMinute = time.split(":");
+        int hour = Integer.parseInt(hourMinute[0]);
+        int minute = Integer.parseInt(hourMinute[1]);
+        return localDate.atTime(hour, minute);
     }
 }

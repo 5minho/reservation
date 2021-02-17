@@ -10,10 +10,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static me.minho.reservation.domain.MemberType.ADMIN;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Transactional
@@ -40,12 +43,51 @@ class ShopServiceTest {
     }
 
     @Test
-    @DisplayName("샵 리스트가 잘 가져와 지는지 테스트")
+    @DisplayName("샵 리스트를 잘 가지고 와야 한다.")
     public void shopListTest() {
         shopService.addShop(testShop);
         entityManager.flush();
 
         List<Shop> shops = shopService.findAll();
         assertThat(shops).contains(testShop);
+    }
+
+    @Test
+    @DisplayName("샵의 예약 가능한 시간을 가지고 올때 shop id 에 해당하는 shop 이 없으면 예외가 발생해야 한다.")
+    public void testFindReservationTimeNotExistShopException() {
+        shopService.addShop(testShop);
+
+        assertThatThrownBy(() -> shopService.findReservationTimeList(-1, LocalDate.now()));
+    }
+
+    @Test
+    @DisplayName("샵의 예약 가능한 시간을 잘 가지고 와야 한다.")
+    public void testFindReservationTime() {
+        shopService.addShop(testShop);
+
+        final LocalDate today = LocalDate.of(2021, 2, 18);
+
+        List<LocalDateTime> expectedReservationTimeList = List.of(
+                today.atTime(9, 0),
+                today.atTime(9, 30),
+                today.atTime(10, 0),
+                today.atTime(10, 30),
+                today.atTime(11, 0),
+                today.atTime(11, 30),
+                today.atTime(12, 0),
+                today.atTime(12, 30),
+                today.atTime(13, 0),
+                today.atTime(13, 30),
+                today.atTime(14, 0),
+                today.atTime(14, 30),
+                today.atTime(15, 0),
+                today.atTime(15, 30),
+                today.atTime(16, 0),
+                today.atTime(16, 30),
+                today.atTime(17, 0),
+                today.atTime(17, 30)
+        );
+
+        assertThat(shopService.findReservationTimeList(1L, today)).isEqualTo(expectedReservationTimeList);
     }
 }
