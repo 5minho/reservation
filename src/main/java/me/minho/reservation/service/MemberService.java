@@ -21,7 +21,7 @@ public class MemberService {
         this.shopRepository = shopRepository;
     }
 
-    public Member save(Member member) {
+    public Member join(Member member) {
         return memberRepository.save(member);
     }
 

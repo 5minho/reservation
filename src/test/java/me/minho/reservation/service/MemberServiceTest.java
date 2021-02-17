@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -37,7 +36,7 @@ class MemberServiceTest {
                 .memberType(NORMAL)
                 .build();
 
-        Member saveMember = memberService.save(testMember);
+        Member saveMember = memberService.join(testMember);
         assertThat(testMember).isEqualTo(saveMember);
     }
 
@@ -52,7 +51,7 @@ class MemberServiceTest {
                 .build();
 
         assertThatThrownBy(() -> {
-            memberService.save(testMember);
+            memberService.join(testMember);
             entityManager.flush();
         }, "이메일 필드는 이메일 형식이어야 한다.");
     }
@@ -68,7 +67,7 @@ class MemberServiceTest {
                 .build();
 
         assertThatThrownBy(() -> {
-            memberService.save(testMember);
+            memberService.join(testMember);
             entityManager.flush();
         }, "이름은 최소한 하나 이상의 문자가 들어가 있어야 한다");
     }
@@ -84,7 +83,7 @@ class MemberServiceTest {
                 .build();
 
         assertThatThrownBy(() -> {
-            memberService.save(testMember);
+            memberService.join(testMember);
             entityManager.flush();
         }, "이름은 최소한 하나 이상의 문자가 들어가 있어야 한다");
     }
@@ -119,7 +118,7 @@ class MemberServiceTest {
 
         MockHttpSession mockHttpSession = new MockHttpSession();
 
-        memberService.save(member);
+        memberService.join(member);
         entityManager.flush();
 
         boolean loginSuccess = memberService.login(email, password, mockHttpSession);
