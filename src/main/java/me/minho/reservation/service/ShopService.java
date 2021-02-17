@@ -4,6 +4,8 @@ import me.minho.reservation.domain.Shop;
 import me.minho.reservation.repository.ShopRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ShopService {
 
@@ -15,5 +17,9 @@ public class ShopService {
 
     public void addShop(Shop shop) {
         shopRepository.save(shop);
+    }
+
+    public List<Shop> findAll() {
+        return shopRepository.findAll();
     }
 }

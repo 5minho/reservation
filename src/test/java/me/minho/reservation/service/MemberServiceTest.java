@@ -100,6 +100,7 @@ class MemberServiceTest {
 
         Shop testShop = new Shop("testshop", "010-1234-1234",  "서울시", "XX 미용실", "09:00", "18:00", 30, testAdminMember);
         Member member = memberService.saveAdminMember(testAdminMember, testShop);
+        entityManager.flush();
 
         assertThat(testAdminMember).isEqualTo(member);
     }

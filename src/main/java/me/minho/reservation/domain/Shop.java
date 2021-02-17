@@ -53,7 +53,7 @@ public class Shop {
     private int timeInterval;
 
     @NotNull
-    @OneToOne(fetch = LAZY)
+    @OneToOne(fetch = LAZY, cascade = PERSIST)
     @JoinColumn(name = "OWNER_ID")
     private Member owner;
 
