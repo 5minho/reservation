@@ -14,11 +14,11 @@ import javax.servlet.http.HttpSession;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final ShopRepository shopRepository;
+    private final ShopService shopService;
 
-    public MemberService(MemberRepository memberRepository, ShopRepository shopRepository) {
+    public MemberService(MemberRepository memberRepository, ShopService shopService) {
         this.memberRepository = memberRepository;
-        this.shopRepository = shopRepository;
+        this.shopService = shopService;
     }
 
     public Member join(Member member) {
@@ -31,8 +31,8 @@ public class MemberService {
     // 3. Member 에 Shop 이라는 nullable 변수를 추가해야함 (null 체크 등의 귀찮음..)
     // 4. saveAdmin 이란 메서드를 분리하면 admin 을 추가할 때 가 Shop 이라는 객체가 꼭 필요하다는 것을 메서드 시그니처에서 파악가능
     public Member saveAdminMember(Member member, Shop shop) {
-        memberRepository.save(member);
-        shopRepository.save(shop);
+        join(member);
+        shopService.addShop(shop);
         return member;
     }
 
