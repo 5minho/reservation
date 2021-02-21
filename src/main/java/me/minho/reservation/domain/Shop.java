@@ -1,13 +1,20 @@
 package me.minho.reservation.domain;
 
 import me.minho.reservation.domain.vo.Period;
+import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.Temporal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
@@ -78,4 +85,33 @@ public class Shop {
     public long getId() {
         return id;
     }
+
+    public LocalDateTime getOpenDateTime(LocalDate dateTime) {
+        return dateTime.atTime(openingTimePeriod.getStart());
+    }
+
+    public LocalDateTime getCloseDateTime(LocalDate dateTime) {
+        return dateTime.atTime(openingTimePeriod.getEnd());
+    }
+
+    public Period<LocalDateTime> getReservationPeriod(LocalDateTime startTime) {
+        return Period.between(startTime, startTime.plusMinutes(timeInterval));
+    }
+
+    public List<Period<LocalDateTime>> findReservationAvailable(LocalDate date, List<LocalDateTime> excepts) {
+        final LocalDateTime start = date.atTime(openingTimePeriod.getStart());
+        final LocalDateTime end = date.atTime(openingTimePeriod.getEnd());
+
+        List<Period<LocalDateTime>> reservationAvailable = new ArrayList<>();
+
+        for (LocalDateTime reservationTime = start ; reservationTime.isBefore(end) ; reservationTime = reservationTime.plusMinutes(timeInterval)) {
+            if (excepts.contains(reservationTime)) {
+                continue;
+            }
+            reservationAvailable.add(Period.between(reservationTime, reservationTime.plusMinutes(timeInterval)));
+        }
+
+        return reservationAvailable;
+    }
+
 }

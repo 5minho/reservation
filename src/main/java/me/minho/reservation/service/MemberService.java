@@ -35,4 +35,8 @@ public class MemberService {
         Member member = memberRepository.findByEmail(email).orElseThrow(IllegalStateException::new);
         return member.login(password, httpSession);
     }
+
+    public Member findById(long id) {
+        return memberRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Id:[" + id + "]"));
+    }
 }

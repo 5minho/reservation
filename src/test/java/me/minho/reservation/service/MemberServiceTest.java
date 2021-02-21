@@ -101,7 +101,7 @@ class MemberServiceTest {
                 .memberType(ADMIN)
                 .build();
 
-        Shop testShop = new Shop("testshop", "010-1234-1234",  "서울시", "XX 미용실", Period.of(LocalTime.of(9, 0), LocalTime.of(18, 0)), 30, testAdminMember);
+        Shop testShop = new Shop("testshop", "010-1234-1234",  "서울시", "XX 미용실", Period.between(LocalTime.of(9, 0), LocalTime.of(18, 0)), 30, testAdminMember);
         Member member = memberService.joinAdminMember(testAdminMember, testShop);
         entityManager.flush();
 

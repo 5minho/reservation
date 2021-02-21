@@ -11,8 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -40,7 +38,7 @@ class ShopServiceTest {
                 .memberType(ADMIN)
                 .build();
 
-        testShop = new Shop("testshop", "010-1234-1234",  "서울시", "XX 미용실", Period.of(LocalTime.of(9, 0), LocalTime.of(18, 0)), 30, testAdminMember);
+        testShop = new Shop("testshop", "010-1234-1234",  "서울시", "XX 미용실", Period.between(LocalTime.of(9, 0), LocalTime.of(18, 0)), 30, testAdminMember);
     }
 
     @Test

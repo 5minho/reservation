@@ -41,4 +41,22 @@ public class Reservation {
     public long getId() {
         return id;
     }
+
+    protected Reservation() {}
+
+    private Reservation(Shop shop, Member member, Period<LocalDateTime> reservationTimePeriod) {
+        this.shop = shop;
+        this.member = member;
+        this.reservationType = ReservationType.NORMAL;
+        this.reservationStatus = ReservationStatus.READY;
+        this.reservationTimePeriod = reservationTimePeriod;
+    }
+
+    public static Reservation createReservation(Shop shop, Member member, LocalDateTime reservationStartTime) {
+        return new Reservation(shop, member, shop.getReservationPeriod(reservationStartTime));
+    }
+
+    public LocalDateTime getReservationStartTime() {
+        return reservationTimePeriod.getStart();
+    }
 }
