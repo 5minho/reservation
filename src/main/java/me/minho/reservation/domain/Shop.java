@@ -1,20 +1,14 @@
 package me.minho.reservation.domain;
 
+import me.minho.reservation.domain.vo.Period;
+
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import static java.util.concurrent.TimeUnit.MINUTES;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
 
@@ -43,13 +37,12 @@ public class Shop {
     @Column(name = "DESCRIPTION", nullable = false)
     private String description;
 
-    @NotNull
-    @Column(name = "OPEN_TIME", nullable = false)
-    private LocalTime openTime;
-
-    @NotNull
-    @Column(name = "CLOSE_TIME", nullable = false)
-    private LocalTime closeTime;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "start", column = @Column(name = "OPEN_TIME")),
+            @AttributeOverride(name = "end", column = @Column(name = "CLOSE_TIME"))
+    })
+    private Period<LocalTime> openingTimePeriod;
 
     // 현재는 분 단위 필요하면 TIME_UNIT 을 추가할 것
     @Min(10)
@@ -67,8 +60,7 @@ public class Shop {
                 @NotBlank String contact,
                 @NotBlank String address,
                 @NotBlank String description,
-                @NotNull LocalTime openTime,
-                @NotNull LocalTime closeTime,
+                @NotNull Period<LocalTime> openingPeriod,
                 @Min(10) int timeInterval,
                 @NotNull Member owner) {
         if (!owner.isAdmin()) {
@@ -78,22 +70,12 @@ public class Shop {
         this.contact = contact;
         this.address = address;
         this.description = description;
-        this.openTime = openTime;
-        this.closeTime = closeTime;
+        this.openingTimePeriod = openingPeriod;
         this.timeInterval = timeInterval;
         this.owner = owner;
     }
 
-    public List<LocalDateTime> getReservationTimeList(LocalDate reservationDate) {
-        final LocalDateTime openTime = this.openTime.atDate(reservationDate);
-        final LocalDateTime closeTime = this.openTime.atDate(reservationDate);
-
-        List<LocalDateTime> reservationTimeList = new ArrayList<>();
-
-        for (LocalDateTime time = openTime ; time.isBefore(closeTime) ; time = time.plusMinutes(timeInterval)) {
-            reservationTimeList.add(time);
-        }
-
-        return reservationTimeList;
+    public long getId() {
+        return id;
     }
 }

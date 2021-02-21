@@ -2,6 +2,7 @@ package me.minho.reservation.service;
 
 import me.minho.reservation.domain.Member;
 import me.minho.reservation.domain.Shop;
+import me.minho.reservation.domain.vo.Period;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,8 +40,7 @@ class ShopServiceTest {
                 .memberType(ADMIN)
                 .build();
 
-        testShop = new Shop("testshop", "010-1234-1234",  "서울시", "XX 미용실",
-                LocalTime.of(9, 0), LocalTime.of(18, 0), 30, testAdminMember);
+        testShop = new Shop("testshop", "010-1234-1234",  "서울시", "XX 미용실", Period.of(LocalTime.of(9, 0), LocalTime.of(18, 0)), 30, testAdminMember);
     }
 
     @Test
@@ -51,44 +51,5 @@ class ShopServiceTest {
 
         List<Shop> shops = shopService.findAll();
         assertThat(shops).contains(testShop);
-    }
-
-    @Test
-    @DisplayName("샵의 예약 가능한 시간을 가지고 올때 shop id 에 해당하는 shop 이 없으면 예외가 발생해야 한다.")
-    public void testFindReservationTimeNotExistShopException() {
-        shopService.addShop(testShop);
-
-        assertThatThrownBy(() -> shopService.findReservationTimeList(-1, LocalDate.now()));
-    }
-
-    @Test
-    @DisplayName("샵의 예약 가능한 시간을 잘 가지고 와야 한다.")
-    public void testFindReservationTime() {
-        shopService.addShop(testShop);
-
-        final LocalDate today = LocalDate.of(2021, 2, 18);
-
-        List<LocalDateTime> expectedReservationTimeList = List.of(
-                today.atTime(9, 0),
-                today.atTime(9, 30),
-                today.atTime(10, 0),
-                today.atTime(10, 30),
-                today.atTime(11, 0),
-                today.atTime(11, 30),
-                today.atTime(12, 0),
-                today.atTime(12, 30),
-                today.atTime(13, 0),
-                today.atTime(13, 30),
-                today.atTime(14, 0),
-                today.atTime(14, 30),
-                today.atTime(15, 0),
-                today.atTime(15, 30),
-                today.atTime(16, 0),
-                today.atTime(16, 30),
-                today.atTime(17, 0),
-                today.atTime(17, 30)
-        );
-
-        assertThat(shopService.findReservationTimeList(1L, today)).isEqualTo(expectedReservationTimeList);
     }
 }

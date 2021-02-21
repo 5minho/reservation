@@ -96,4 +96,8 @@ public class Member {
             return new Member(this);
         }
     }
+
+    public long getId() {
+        return id;
+    }
 }

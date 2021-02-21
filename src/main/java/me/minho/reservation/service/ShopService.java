@@ -5,8 +5,6 @@ import me.minho.reservation.repository.ShopRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -29,8 +27,7 @@ public class ShopService {
     }
 
     @Transactional(readOnly = true)
-    public List<LocalDateTime> findReservationTimeList(long shopId, LocalDate reservationDate) {
-        Shop shop = shopRepository.findById(shopId).orElseThrow(IllegalArgumentException::new);
-        return shop.getReservationTimeList(reservationDate);
+    public Shop findById(long shopId) {
+        return shopRepository.findById(shopId).orElseThrow(() -> new IllegalArgumentException("ID:[" + shopId + "] 인 shop 이 없다."));
     }
 }

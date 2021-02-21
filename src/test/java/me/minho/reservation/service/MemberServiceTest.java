@@ -3,6 +3,7 @@ package me.minho.reservation.service;
 import me.minho.reservation.domain.Member;
 import me.minho.reservation.domain.MemberType;
 import me.minho.reservation.domain.Shop;
+import me.minho.reservation.domain.vo.Period;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,9 +101,8 @@ class MemberServiceTest {
                 .memberType(ADMIN)
                 .build();
 
-        Shop testShop = new Shop("testshop", "010-1234-1234",  "서울시", "XX 미용실",
-                LocalTime.of(9, 0), LocalTime.of(18, 0), 30, testAdminMember);
-        Member member = memberService.saveAdminMember(testAdminMember, testShop);
+        Shop testShop = new Shop("testshop", "010-1234-1234",  "서울시", "XX 미용실", Period.of(LocalTime.of(9, 0), LocalTime.of(18, 0)), 30, testAdminMember);
+        Member member = memberService.joinAdminMember(testAdminMember, testShop);
         entityManager.flush();
 
         assertThat(testAdminMember).isEqualTo(member);

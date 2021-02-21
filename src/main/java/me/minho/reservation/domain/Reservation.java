@@ -1,5 +1,7 @@
 package me.minho.reservation.domain;
 
+import me.minho.reservation.domain.vo.Period;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -13,11 +15,12 @@ public class Reservation {
     @Column(name = "RESERVATION_ID")
     private long id;
 
-    @Column(name = "START_TIME", nullable = false)
-    private LocalDateTime startTime;
-
-    @Column(name = "END_TIME", nullable = false)
-    private LocalDateTime endTime;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "start", column = @Column(name = "START_TIME")),
+            @AttributeOverride(name = "end", column = @Column(name = "END_TIME"))
+    })
+    private Period<LocalDateTime> reservationTimePeriod;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "RESERVATION_STATUS", nullable = false)
@@ -34,4 +37,8 @@ public class Reservation {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "SHOP_ID")
     private Shop shop;
+
+    public long getId() {
+        return id;
+    }
 }
