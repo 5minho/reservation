@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
+import java.time.LocalTime;
+
 import static me.minho.reservation.domain.MemberType.ADMIN;
 import static me.minho.reservation.domain.MemberType.NORMAL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -98,7 +100,8 @@ class MemberServiceTest {
                 .memberType(ADMIN)
                 .build();
 
-        Shop testShop = new Shop("testshop", "010-1234-1234",  "서울시", "XX 미용실", "09:00", "18:00", 30, testAdminMember);
+        Shop testShop = new Shop("testshop", "010-1234-1234",  "서울시", "XX 미용실",
+                LocalTime.of(9, 0), LocalTime.of(18, 0), 30, testAdminMember);
         Member member = memberService.saveAdminMember(testAdminMember, testShop);
         entityManager.flush();
 

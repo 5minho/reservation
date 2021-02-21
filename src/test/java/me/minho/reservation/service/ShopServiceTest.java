@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import static me.minho.reservation.domain.MemberType.ADMIN;
@@ -39,7 +40,7 @@ class ShopServiceTest {
                 .build();
 
         testShop = new Shop("testshop", "010-1234-1234",  "서울시", "XX 미용실",
-                "09:00", "18:00", 30, testAdminMember);
+                LocalTime.of(9, 0), LocalTime.of(18, 0), 30, testAdminMember);
     }
 
     @Test

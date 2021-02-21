@@ -8,6 +8,7 @@ import javax.validation.constraints.Pattern;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,14 +44,12 @@ public class Shop {
     private String description;
 
     @NotNull
-    @Pattern(regexp = "^[012]\\d:[012345]\\d$")
     @Column(name = "OPEN_TIME", nullable = false)
-    private String openTime;
+    private LocalTime openTime;
 
     @NotNull
-    @Pattern(regexp = "^[012]\\d:[012345]\\d$")
     @Column(name = "CLOSE_TIME", nullable = false)
-    private String closeTime;
+    private LocalTime closeTime;
 
     // 현재는 분 단위 필요하면 TIME_UNIT 을 추가할 것
     @Min(10)
@@ -68,8 +67,8 @@ public class Shop {
                 @NotBlank String contact,
                 @NotBlank String address,
                 @NotBlank String description,
-                @Pattern(regexp = "^[012]\\d:[012345]\\d$") String openTime,
-                @Pattern(regexp = "^[012]\\d:[012345]\\d$") String closeTime,
+                @NotNull LocalTime openTime,
+                @NotNull LocalTime closeTime,
                 @Min(10) int timeInterval,
                 @NotNull Member owner) {
         if (!owner.isAdmin()) {
@@ -86,8 +85,8 @@ public class Shop {
     }
 
     public List<LocalDateTime> getReservationTimeList(LocalDate reservationDate) {
-        final LocalDateTime openTime = atTime(reservationDate, this.openTime);
-        final LocalDateTime closeTime = atTime(reservationDate, this.closeTime);
+        final LocalDateTime openTime = this.openTime.atDate(reservationDate);
+        final LocalDateTime closeTime = this.openTime.atDate(reservationDate);
 
         List<LocalDateTime> reservationTimeList = new ArrayList<>();
 
@@ -96,12 +95,5 @@ public class Shop {
         }
 
         return reservationTimeList;
-    }
-
-    private LocalDateTime atTime(LocalDate localDate, String time) {
-        String[] hourMinute = time.split(":");
-        int hour = Integer.parseInt(hourMinute[0]);
-        int minute = Integer.parseInt(hourMinute[1]);
-        return localDate.atTime(hour, minute);
     }
 }

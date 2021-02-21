@@ -3,6 +3,8 @@ package me.minho.reservation.domain;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalTime;
+
 import static me.minho.reservation.domain.MemberType.ADMIN;
 import static me.minho.reservation.domain.MemberType.NORMAL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -21,7 +23,7 @@ class ShopTest {
                 .build();
 
         assertThatThrownBy(() ->
-            new Shop("testshop", "010-1234-1234",  "서울시", "XX 미용실", "09:00", "18:00", 30, testAdminMember)
+            new Shop("testshop", "010-1234-1234",  "서울시", "XX 미용실", LocalTime.of(9, 0), LocalTime.of(18, 0), 30, testAdminMember)
         );
     }
 
