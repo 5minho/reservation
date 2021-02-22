@@ -33,7 +33,7 @@ public class ShopApiController {
         }
     }
 
-    @GetMapping("/shop/{shopId}/reservations")
+    @GetMapping("/shop/{shopId}/reservations") // TODO: LocalDate만 받아도 될 듯
     public RestResponseData<List<ReservationResponse>> findShopWithOneDayReservationList(@PathVariable("shopId") long shopId, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime dateTime) {
         try {
             return new RestResponseData(HttpStatus.OK, ReservationResponse.of(shopService.findShopWithOneDayReservationList(shopId, dateTime), dateTime));

@@ -36,6 +36,7 @@ public class ShopService {
         Shop shop = findById(shopId);
         List<Reservation> reservationList = reservationService.findOneDayReservationList(shop.getId(), dateTime);
         shop.setReservationList(reservationList);
+        // TODO: 예약 가능한 거 골라내는 거 service 단에서 해야 하나?
         return shop;
     }
 
