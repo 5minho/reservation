@@ -2,6 +2,7 @@ package me.minho.reservation.service;
 
 import me.minho.reservation.domain.Member;
 import me.minho.reservation.domain.Reservation;
+import me.minho.reservation.domain.ReservationStatus;
 import me.minho.reservation.domain.Shop;
 import me.minho.reservation.domain.vo.Period;
 import me.minho.reservation.domain.vo.Periods;
@@ -14,6 +15,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static me.minho.reservation.domain.ReservationStatus.READY;
 
 @Service
 @Transactional
@@ -42,7 +45,7 @@ public class ReservationService {
     @Transactional(readOnly = true)
     public List<Period<LocalDateTime>> findReservedTimePeriods(long shopId, LocalDate reservationDate) {
         Shop shop = shopService.findById(shopId);
-        List<Reservation> reservationsInToday = reservationRepository.findReservationByShopIdAndStartTimeBetween(shopId, shop.getWorkingTimePeriod(reservationDate));
+        List<Reservation> reservationsInToday = reservationRepository.findReservationByShopIdAndStartTimeBetweenAndStatus(shopId, shop.getWorkingTimePeriod(reservationDate), READY);
         List<LocalDateTime> exceptPeriods = reservationsInToday.stream().map(Reservation::getReservationStartTime).collect(Collectors.toList());
         return shop.findReservationAvailable(reservationDate, exceptPeriods);
     }
@@ -51,6 +54,13 @@ public class ReservationService {
     public List<Reservation> findReservations(long memberId, LocalDate targetDate) {
         final Period<LocalDateTime> targetDateStartEnd = Period.between(targetDate.atStartOfDay(), targetDate.atTime(LocalTime.MAX));
         return reservationRepository.findReservationByMemberIdAndStartTimeBetween(memberId, targetDateStartEnd);
+    }
+
+    public Reservation cancel(long reservationId, long memberId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new IllegalArgumentException("ID:[" + reservationId + "] 인 reservation 은 없다."));
+        reservation.cancel(memberId);
+        return reservation;
     }
 
 }

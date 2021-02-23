@@ -59,4 +59,22 @@ public class Reservation {
     public LocalDateTime getReservationStartTime() {
         return reservationTimePeriod.getStart();
     }
+
+    public void cancel(long memberId) {
+        if (!isReservedBy(memberId)) {
+            throw new IllegalStateException("취소할 수 없다. 예약자 Id[" + this.member.getId() + "] 예약 취소자 Id[" + memberId + "]");
+        }
+        if (reservationStatus.cannotCancel()) {
+            throw new IllegalStateException("취소할 수 없다. 현재 예약 상태 [" + reservationStatus + "]");
+        }
+        reservationStatus = ReservationStatus.CANCELED;
+    }
+
+    private boolean isReservedBy(long memberId) {
+        return member.equalId(memberId);
+    }
+
+    public boolean isCanceled() {
+        return reservationStatus.isCanceled();
+    }
 }

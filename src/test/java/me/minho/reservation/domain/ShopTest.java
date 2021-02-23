@@ -14,15 +14,12 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 public class ShopTest {
 
-    public static final Shop TEST_SHOP = new Shop("testshop", "010-1234-1234",  "서울시",
-            "XX 미용실", Period.between(LocalTime.of(9, 0), LocalTime.of(18, 0)), 30, MemberTest.TEST_ADMIN);
-
     @Test
     @DisplayName("멤버 타입이 Normal 인 멤버는 Shop 을 가질 수 없다.")
     public void createShopTest() {
-        Member testAdminMember = MemberTest.TEST_ADMIN;
+        Member testMember = Member.TEST_MEMBER;
         assertThatThrownBy(() ->
-            new Shop("testshop", "010-1234-1234",  "서울시", "XX 미용실", Period.between(LocalTime.of(9, 0), LocalTime.of(18, 0)), 30, testAdminMember)
+            new Shop("testshop", "010-1234-1234",  "서울시", "XX 미용실", Period.between(LocalTime.of(9, 0), LocalTime.of(18, 0)), 30, testMember)
         );
     }
 
@@ -37,7 +34,7 @@ public class ShopTest {
                 LocalDateTime.of(today, LocalTime.of(15, 30))
         );
 
-        List<Period<LocalDateTime>> reservationAvailable = TEST_SHOP.findReservationAvailable(today, reservationPeriods);
+        List<Period<LocalDateTime>> reservationAvailable = Shop.TEST_SHOP.findReservationAvailable(today, reservationPeriods);
         System.out.println(reservationAvailable);
         assertThat(reservationAvailable.size()).isEqualTo(15);
     }

@@ -1,6 +1,8 @@
 package me.minho.reservation.service;
 
 import me.minho.reservation.domain.*;
+import me.minho.reservation.domain.vo.Period;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,9 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
+import static me.minho.reservation.domain.MemberType.ADMIN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,16 +26,17 @@ class ReservationServiceTest {
     @Autowired private ReservationService reservationService;
     @Autowired private MemberService memberService;
     @Autowired private ShopService shopService;
+    @Autowired private EntityManager entityManager;
 
     private Member member;
     private Shop shop;
 
+    // 테스트 실패 같이 보기
     @BeforeEach
     public void setup() {
-        this.member = MemberTest.TEST_MEMBER;
+        this.member = Member.TEST_MEMBER;
+        this.shop = Shop.TEST_SHOP;
         memberService.join(member);
-
-        this.shop = ShopTest.TEST_SHOP;
         shopService.addShop(shop);
     }
 
@@ -60,5 +66,20 @@ class ReservationServiceTest {
         //then
         assertThat(reservations.size()).isEqualTo(1);
         assertThat(reservations).contains(reservation);
+    }
+
+    @Test
+    @DisplayName("예약을 취소하면 예약상태가 취소 상태로 바뀌어야 한다.")
+    public void reservationCancelTest() {
+        // given
+        final LocalDateTime reservationTime = LocalDateTime.of(2021, 12, 24, 9, 30);
+        final Reservation reservation = reservationService.reserve(member.getId(), shop.getId(), reservationTime);
+
+        // when
+        reservationService.cancel(reservation.getId(), member.getId());
+
+        // then
+        List<Reservation> reservations = reservationService.findReservations(member.getId(), reservationTime.toLocalDate());
+        assertThat(reservations.get(0).isCanceled()).isTrue();
     }
 }

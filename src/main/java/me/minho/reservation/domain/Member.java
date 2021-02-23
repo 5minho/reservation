@@ -10,11 +10,29 @@ import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "MEMBER")
+@SequenceGenerator(name = "MEMBER_SEQ_GENERATOR")
 public class Member {
+    public static final Member TEST_MEMBER;
+    public static final Member TEST_ADMIN;
+    static {
+        TEST_MEMBER = new Member();
+        TEST_MEMBER.id = 1;
+        TEST_MEMBER.memberType = MemberType.NORMAL;
+        TEST_MEMBER.password = "test1234";
+        TEST_MEMBER.email = "test@email.com";
+        TEST_MEMBER.name = "테스트";
+
+        TEST_ADMIN = new Member();
+        TEST_ADMIN.id = 2;
+        TEST_ADMIN.memberType = MemberType.ADMIN;
+        TEST_ADMIN.password = "test1234";
+        TEST_ADMIN.email = "test@admin.com";
+        TEST_ADMIN.name = "테스트어드민";
+    }
 
     public static final String LOGIN_ATTRIBUTE_NAME = "MEMBER_ID";
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MEMBER_SEQ_GENERATOR")
     @Column(name = "MEMBER_ID")
     private long id;
 
@@ -99,5 +117,9 @@ public class Member {
 
     public long getId() {
         return id;
+    }
+
+    public boolean equalId(long memberId) {
+        return this.id == memberId;
     }
 }

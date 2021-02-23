@@ -21,9 +21,22 @@ import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Table(name = "SHOP")
+@SequenceGenerator(name = "SHOP_SEQ_GENERATOR")
 public class Shop {
+    public static final Shop TEST_SHOP;
+    static {
+        TEST_SHOP = new Shop();
+        TEST_SHOP.id = 1;
+        TEST_SHOP.openingTimePeriod = Period.between(LocalTime.of(9, 0), LocalTime.of(18, 0));
+        TEST_SHOP.timeInterval = 30;
+        TEST_SHOP.owner = Member.TEST_ADMIN;
+        TEST_SHOP.name = "테스트 미용실";
+        TEST_SHOP.contact = "010-1234-1234";
+        TEST_SHOP.address = "구로구";
+    }
 
-    @Id @GeneratedValue
+
+    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SHOP_SEQ_GENERATOR")
     @Column(name = "SHOP_ID")
     private long id;
 
