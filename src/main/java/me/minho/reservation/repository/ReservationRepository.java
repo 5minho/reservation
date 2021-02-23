@@ -1,6 +1,7 @@
 package me.minho.reservation.repository;
 
 import me.minho.reservation.domain.Reservation;
+import me.minho.reservation.domain.vo.Period;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,7 +11,12 @@ import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
-    @Query("select r from Reservation r where r.shop.id = :shopId and r.reservationTimePeriod.start between :startTime and :endTime")
-    List<Reservation> findReservationByShopAndStartTimeBetween(@Param("shopId") long shopId, LocalDateTime startTime, LocalDateTime endTime);
+    @Query("select r from Reservation r where r.shop.id = :shopId and r.reservationTimePeriod.start between :#{#period.start} and :#{#period.end}")
+    List<Reservation> findReservationByShopIdAndStartTimeBetween(@Param("shopId") long shopId,
+                                                                 @Param("period") Period<LocalDateTime> period);
+
+    @Query("select r from Reservation r where r.member.id = :memberId and r.reservationTimePeriod.start between :#{#period.start} and :#{#period.end}")
+    List<Reservation> findReservationByMemberIdAndStartTimeBetween(@Param("memberId") long memberId,
+                                                                   @Param("period") Period<LocalDateTime> period);
 
 }

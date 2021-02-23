@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,7 +30,7 @@ public class ReservationService {
     }
 
     public Reservation reserve(long memberId, long shopId, LocalDateTime reservationTime) {
-        Periods<LocalDateTime> reservationPeriods = Periods.of(findReservationTimeList(shopId, reservationTime.toLocalDate()));
+        Periods<LocalDateTime> reservationPeriods = Periods.of(findReservedTimePeriods(shopId, reservationTime.toLocalDate()));
         if (!reservationPeriods.contains(reservationTime)) {
             throw new IllegalArgumentException(reservationTime + " 에는 예약 불가 입니다.");
         }
@@ -39,11 +40,17 @@ public class ReservationService {
     }
 
     @Transactional(readOnly = true)
-    public List<Period<LocalDateTime>> findReservationTimeList(long shopId, LocalDate reservationDate) {
+    public List<Period<LocalDateTime>> findReservedTimePeriods(long shopId, LocalDate reservationDate) {
         Shop shop = shopService.findById(shopId);
-        List<Reservation> reservationsInToday = reservationRepository.findReservationByShopAndStartTimeBetween(shopId, shop.getOpenDateTime(reservationDate), shop.getCloseDateTime(reservationDate));
+        List<Reservation> reservationsInToday = reservationRepository.findReservationByShopIdAndStartTimeBetween(shopId, shop.getWorkingTimePeriod(reservationDate));
         List<LocalDateTime> exceptPeriods = reservationsInToday.stream().map(Reservation::getReservationStartTime).collect(Collectors.toList());
         return shop.findReservationAvailable(reservationDate, exceptPeriods);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Reservation> findReservations(long memberId, LocalDate targetDate) {
+        final Period<LocalDateTime> targetDateStartEnd = Period.between(targetDate.atStartOfDay(), targetDate.atTime(LocalTime.MAX));
+        return reservationRepository.findReservationByMemberIdAndStartTimeBetween(memberId, targetDateStartEnd);
     }
 
 }

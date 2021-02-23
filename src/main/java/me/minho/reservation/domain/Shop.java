@@ -86,12 +86,10 @@ public class Shop {
         return id;
     }
 
-    public LocalDateTime getOpenDateTime(LocalDate dateTime) {
-        return dateTime.atTime(openingTimePeriod.getStart());
-    }
-
-    public LocalDateTime getCloseDateTime(LocalDate dateTime) {
-        return dateTime.atTime(openingTimePeriod.getEnd());
+    public Period<LocalDateTime> getWorkingTimePeriod(LocalDate targetDate) {
+        final LocalDateTime start = targetDate.atTime(openingTimePeriod.getStart());
+        final LocalDateTime end = targetDate.atTime(openingTimePeriod.getEnd());
+        return Period.between(start, end);
     }
 
     public Period<LocalDateTime> getReservationPeriod(LocalDateTime startTime) {
