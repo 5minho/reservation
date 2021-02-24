@@ -7,6 +7,7 @@ import lombok.Setter;
 import me.minho.reservation.shop.domain.Shop;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 @NoArgsConstructor
 @Getter
@@ -29,6 +30,7 @@ public class Member {
     private String email;
 
     @Column(name = "PASSWORD", nullable = false)
+    @Size(min = 8, max = 20)
     private String password;
 
     @Column(name = "NAME", nullable = false)
