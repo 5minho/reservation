@@ -15,8 +15,7 @@ public class MemberApiController {
 
     private final MemberService memberService;
 
-    // TODO: members로 네이밍하는게 맞음
-    @PostMapping("/member")
+    @PostMapping("/members")
     public RestResponseData<Long> signUp(@RequestBody MemberSaveRequest memberSaveRequest) {
         try {
             return new RestResponseData(HttpStatus.OK, memberService.signUp(memberSaveRequest.toMember()), "회원가입 성공!");

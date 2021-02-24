@@ -24,7 +24,7 @@ public class ShopApiController {
         return new RestResponseData(HttpStatus.OK, ShopResponse.of(shopService.findAll()));
     }
 
-    @GetMapping("/shop/{id}")
+    @GetMapping("/shops/{id}")
     public RestResponseData<ShopResponse> findById(@PathVariable("id") long id) {
         try {
             return new RestResponseData(HttpStatus.OK, ShopResponse.of(shopService.findById(id)));
@@ -33,16 +33,19 @@ public class ShopApiController {
         }
     }
 
-    @GetMapping("/shop/{shopId}/reservations") // TODO: LocalDate만 받아도 될 듯
+    // TODO: LocalDate만 받아도 될 듯
+    @GetMapping("/shops/{shopId}/reservations")
     public RestResponseData<List<ReservationResponse>> findShopWithOneDayReservationList(@PathVariable("shopId") long shopId, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime dateTime) {
         try {
             return new RestResponseData(HttpStatus.OK, ReservationResponse.of(shopService.findShopWithOneDayReservationList(shopId, dateTime), dateTime));
-        } catch (IllegalArgumentException e) {
+        }
+        // TODO: 네이버 예약은 shopId에 해당하는 거 없으면 200 내려줌(정답은 없으니 프론트와 규약만 잘 지키자)
+        catch (IllegalArgumentException e) {
             return new RestResponseData(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
-    @PostMapping("/shop/{shopId}/reservation")
+    @PostMapping("/shops/{shopId}/reservations")
     public RestResponseData<Long> saveReservation(@PathVariable("shopId") long shopId, @RequestBody ReservationSaveRequest reservationSaveRequest) {
         try {
             return new RestResponseData(HttpStatus.OK, shopService.saveReservation(shopId, reservationSaveRequest.toReservation()), "예약 완료!");

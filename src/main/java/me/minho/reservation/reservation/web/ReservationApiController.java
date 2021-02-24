@@ -22,8 +22,9 @@ public class ReservationApiController {
         return new RestResponseData(HttpStatus.OK, ReservationResponse.of(reservationService.findAll()));
     }
 
-    @PutMapping("/reservation/{id}/status")
-    public RestResponseData<Long> updateStatus(@PathVariable("id") long id, @RequestBody ReservationStatusUpdateRequest reservationStatusUpdateRequest) {
+    // TODO: 밑에 2개 합칠건가, status를 받을 것인가 status 별로 endpoint를 나눌 것인가
+    @PutMapping("/reservations/{id}/status")
+    public RestResponseData<Long> activate(@PathVariable("id") long id, @RequestBody ReservationStatusUpdateRequest reservationStatusUpdateRequest) {
         try {
             return new RestResponseData(HttpStatus.OK, reservationService.updateStatus(id, reservationStatusUpdateRequest.getStatus()), "변경 성공!");
         } catch (IllegalArgumentException e) {
@@ -31,7 +32,7 @@ public class ReservationApiController {
         }
     }
 
-    @PutMapping("/reservation/{id}/time")
+    @PutMapping("/reservations/{id}/time")
     public RestResponseData<Long> update(@PathVariable("id") long id, @RequestBody ReservationTimeUpdateRequest reservationTimeUpdateRequest) {
         try {
             return new RestResponseData(HttpStatus.OK, reservationService.updateTime(id, reservationTimeUpdateRequest), "변경 성공!");

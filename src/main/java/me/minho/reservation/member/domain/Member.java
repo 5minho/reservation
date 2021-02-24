@@ -39,6 +39,7 @@ public class Member {
     private MemberType memberType;
 
     @Setter
+//    @OneToOne(mappedBy = "owner", cascade = CascadeType.PERSIST) // cascade persist 주면 shop도 같이 저장되지만, 관리자일 때만 저장되어야 함
     @OneToOne(mappedBy = "owner")
     private Shop shop;
 

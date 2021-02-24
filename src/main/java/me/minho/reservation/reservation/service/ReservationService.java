@@ -32,6 +32,7 @@ public class ReservationService {
         return reservationRepository.save(reservation).getId();
     }
 
+    // TODO: shopId를 알고 있네? reservation은 shop을 모르게 바꿔보자
     private Reservation findByShopIdAndStartTimeAndStatus(long shopId, LocalDateTime startTime, ReservationStatus status) {
         return reservationRepository.findByShopIdAndStartTimeAndReservationStatus(shopId, startTime, status);
     }
@@ -43,7 +44,13 @@ public class ReservationService {
     @Transactional
     public long updateStatus(long id, ReservationStatus status) {
         Reservation reservation = reservationRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 예약이 없습니다. id = " + id));
+        /**
+         * TODO: activate Vs setReservationStatus
+         * activate로 하면 endpoint 새로 만들어야 하지만, activate 메소드 안에서 여러 예외처리 가능함
+         * setReservationStatus로 하면 enpoint 새로 만들 필요 없지만, 외부에서 값을 넣어줘야 하고 예외 처리하려면 if문 덕지덕지
+         */
         reservation.setReservationStatus(status);
+        reservation.activate();
         return reservation.getId();
     }
 

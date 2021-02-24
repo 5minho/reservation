@@ -60,6 +60,14 @@ public class Reservation {
         return reservationStatus == ReservationStatus.COMPLETED;
     }
 
+    public void activate() {
+        if (reservationStatus == ReservationStatus.CANCELED) {
+            throw new IllegalArgumentException("");
+        }
+
+        this.reservationStatus = ReservationStatus.COMPLETED;
+    }
+
     public void updateTime(LocalDateTime startTime, LocalDateTime endTime) {
         if (startTime == null || endTime == null) {
             throw new IllegalStateException("예약 시간 정보는 반드시 존재해야 합니다");

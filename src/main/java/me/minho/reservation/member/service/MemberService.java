@@ -24,7 +24,6 @@ public class MemberService {
         // 회원 생성
         memberRepository.save(member);
 
-        // TODO: cascade persist 달면 아래처럼 안해도 됨
         // 관리자면 샵도 함께 생성
         if (member.isAdmin()) {
             shopService.save(member.getShop());

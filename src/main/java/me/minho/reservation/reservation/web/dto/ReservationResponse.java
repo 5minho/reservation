@@ -40,6 +40,7 @@ public class ReservationResponse {
                 .collect(Collectors.toList());
     }
 
+    // TODO: 예약 가능한 것을 골라내는 로직을 변환할 때 하는 것이 아니라, 도메인의 메소드로 만드는게 좋을 듯
     public static List<ReservationResponse> of(Shop shop, LocalDateTime dateTime) {
         final int HOURS_OF_ONE_DAY = 24;
         final int MINUTES_OF_ONE_HOUR = 60;

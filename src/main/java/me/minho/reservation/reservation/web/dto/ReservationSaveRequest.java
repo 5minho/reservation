@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ReservationSaveRequest {
 
+    // TODO: config로 전역적으로 설정할 수도 있음
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime startTime;
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
