@@ -46,6 +46,7 @@ public class Shop {
     @Column(name = "RESERVATION_TIME_INTERVAL", nullable = false)
     private int interval;
 
+    // TODO: cascade persist 주면 shop 저장하면서 member(관리자) 저장 가능
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "MEMBER_ID")
     private Member owner;
