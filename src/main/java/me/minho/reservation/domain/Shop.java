@@ -32,6 +32,7 @@ public class Shop {
         TEST_SHOP.owner = Member.TEST_ADMIN;
         TEST_SHOP.name = "테스트 미용실";
         TEST_SHOP.contact = "010-1234-1234";
+        TEST_SHOP.description = "미용실 입니다.";
         TEST_SHOP.address = "구로구";
     }
 

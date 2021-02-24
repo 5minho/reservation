@@ -33,10 +33,7 @@ public class ReservationService {
     }
 
     public Reservation reserve(long memberId, long shopId, LocalDateTime reservationTime) {
-        Periods<LocalDateTime> reservationPeriods = Periods.of(findReservedTimePeriods(shopId, reservationTime.toLocalDate()));
-        if (!reservationPeriods.contains(reservationTime)) {
-            throw new IllegalArgumentException(reservationTime + " 에는 예약 불가 입니다.");
-        }
+        checkAvailableReservationTime(shopId, reservationTime);
         final Member member = memberService.findById(memberId);
         final Shop shop = shopService.findById(shopId);
         return reservationRepository.save(Reservation.createReservation(shop, member, reservationTime));
@@ -57,10 +54,27 @@ public class ReservationService {
     }
 
     public Reservation cancel(long reservationId, long memberId) {
-        Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new IllegalArgumentException("ID:[" + reservationId + "] 인 reservation 은 없다."));
+        Reservation reservation = findById(reservationId);
         reservation.cancel(memberId);
         return reservation;
+    }
+
+    public void updateReservationTime(long reservationId, LocalDateTime reservationTime) {
+        Reservation reservation = findById(reservationId);
+        checkAvailableReservationTime(reservation.getShopId(), reservationTime);
+        reservation.updateReservationTime(reservationTime);
+    }
+
+    private void checkAvailableReservationTime(long shopId, LocalDateTime reservationTime) {
+        Periods<LocalDateTime> reservationPeriods = Periods.of(findReservedTimePeriods(shopId, reservationTime.toLocalDate()));
+        if (!reservationPeriods.contains(reservationTime)) {
+            throw new IllegalArgumentException(reservationTime + " 에는 예약 불가 입니다.");
+        }
+    }
+
+    public Reservation findById(long reservationId) {
+        return reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new IllegalArgumentException("ID:[" + reservationId + "] 인 reservation 은 없다."));
     }
 
 }

@@ -77,4 +77,12 @@ public class Reservation {
     public boolean isCanceled() {
         return reservationStatus.isCanceled();
     }
+
+    public long getShopId() {
+        return shop.getId();
+    }
+
+    public void updateReservationTime(LocalDateTime reservationTime) {
+        this.reservationTimePeriod = shop.getReservationPeriod(reservationTime);
+    }
 }

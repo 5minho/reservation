@@ -17,6 +17,7 @@ import java.util.List;
 
 import static me.minho.reservation.domain.MemberType.ADMIN;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -37,6 +38,7 @@ class ReservationServiceTest {
         this.member = Member.TEST_MEMBER;
         this.shop = Shop.TEST_SHOP;
         memberService.join(member);
+        memberService.join(Member.TEST_ADMIN);
         shopService.addShop(shop);
     }
 
@@ -81,5 +83,31 @@ class ReservationServiceTest {
         // then
         List<Reservation> reservations = reservationService.findReservations(member.getId(), reservationTime.toLocalDate());
         assertThat(reservations.get(0).isCanceled()).isTrue();
+    }
+
+    @Test
+    @DisplayName("예약 시간을 변경할 수 있다.")
+    public void updateReservationTimeTest() {
+        // given
+        final LocalDateTime reservationTime = LocalDateTime.of(2021, 12, 24, 9, 30);
+        final Reservation reservation = reservationService.reserve(member.getId(), shop.getId(), reservationTime);
+
+        // when
+        reservationService.updateReservationTime(reservation.getId(), reservationTime.plusDays(1));
+
+        // then
+        assertThat(reservation.getReservationStartTime()).isEqualTo(LocalDateTime.of(2021, 12, 25, 9, 30));
+    }
+
+    @Test
+    @DisplayName("변경할 예약시간이 이미 예약이 있으면 변경하지 못한다.")
+    public void updateReservationTimeFailTest() {
+        // given
+        final LocalDateTime reservationTime = LocalDateTime.of(2021, 12, 24, 9, 30);
+        final Reservation reservation = reservationService.reserve(member.getId(), shop.getId(), reservationTime);
+
+        // when
+        // then
+        assertThatThrownBy(() -> reservationService.updateReservationTime(reservation.getId(), reservationTime));
     }
 }
